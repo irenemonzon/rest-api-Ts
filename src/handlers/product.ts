@@ -60,7 +60,38 @@ export const updateProduct=async(req:Request,res:Response)=>{
     await product.update(req.body)
     await product.save()
 
-    res.json({data:product})
-   
+    res.json({data:product})  
 }
+
+export const updateAvailability=async(req:Request,res:Response)=>{
+    const {id}=req.params
+    const product= await Product.findByPk(id)
+
+    if(!product){
+        return res.status(404).json({
+            error:'Producto no encontrado'
+        })
+    }
+    //Actualizar
+    product.availability=!product.dataValues.availability
+    await product.save()
+
+
+    res.json({data:product})  
+}
+
+export const deleteProduct =async(req:Request,res:Response)=>{
+    const {id}=req.params
+    const product= await Product.findByPk(id)
+
+    if(!product){
+        return res.status(404).json({
+            error:'Producto no encontrado'
+        })
+    }
+    await product.destroy()
+    res.json({data:'Producto Eliminado'})
+  
+}
+
 
