@@ -86,3 +86,70 @@ describe('GET /api/products/:id',()=>{
     })
 
 })
+
+describe('PUT /api/products/:id',()=>{
+    it('should display validation error messages when updating a product',async()=>{
+        const response=await request(server).put('/api/products/1').send()
+
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty('errors')
+        expect(response.body.errors).toBeTruthy()
+        expect(response.body.errors).toHaveLength(5)
+
+    })
+    it('should validate that the price is greater tha 0',async()=>{
+        const response=await request(server).put('/api/products/1').send({     
+                name:"Mouse-Testing",
+                price:-300,
+                availability:true
+        })
+
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty('errors')
+        expect(response.body.errors).toBeTruthy()
+        expect(response.body.errors).toHaveLength(1)
+        expect(response.body.errors[0].msg).toBe('Precio no valido')
+    })
+
+    it('should check a valid Id in the URL',async()=>{
+        const response=await request(server).put('/api/products/not-valid-url').send({
+            name:"Mouse-Testing",
+            price:300,
+            availability:true
+
+        })
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty('errors')
+        expect(response.body.errors).toHaveLength(1)
+        expect(response.body.errors[0].msg).toBe('ID no valido')
+    })
+
+    it('should return a 404 response for a non-existent product',async()=>{
+        const productId=2000
+        const response=await request(server).put(`/api/products/${productId}`).send({     
+                name:"Mouse-Testing",
+                price:300,
+                availability:true
+        })
+
+        expect(response.status).toBe(404)
+        expect(response.body.error).toBe('Producto no encontrado')
+
+        expect(response.status).not.toBe(200)
+    })
+
+    it('should update an existing product with valid data',async()=>{
+        const response=await request(server).put('/api/products/1').send({     
+                name:"Mouse-Testing",
+                price:400,
+                availability:true
+        })
+
+        expect(response.status).toBe(200)
+        expect(response.body).toHaveProperty('data')
+
+    })
+
+
+
+})
