@@ -245,7 +245,7 @@ router.patch('/:id',
  *                 application/json:
  *                      schema:
  *                          type: string 
- *                          value:  'Producto eliminado'
+ *                          value: 'Producto eliminado'
  *          404:
  *              description: Product Not Found
  *          
