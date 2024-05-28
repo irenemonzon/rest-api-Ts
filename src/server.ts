@@ -1,5 +1,7 @@
 import express from 'express'
 import colors from 'colors'
+import cors, {CorsOptions} from 'cors'
+import morgan from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './config/swagger'
 import router from './router'
@@ -20,9 +22,28 @@ connectDB()
 
 const server=express()
 
+//permitir conexion cors
+
+const corsOptions:CorsOptions={
+    origin:function(origin,callback){
+        if(origin=== process.env.FRONTEND_URL){
+            callback(null, true)
+
+        }else{
+          callback(new Error('Error de cors'))
+
+        }
+
+    }
+
+}
+server.use(cors(corsOptions))
+
 //leer datos de formularios
 
 server.use(express.json())
+
+server.use(morgan('dev'))
 
 server.use('/api/products', router)
 
